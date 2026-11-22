@@ -1,0 +1,108 @@
+/* Цвета заданы переменными: тёмная тема меняет только их, а не стили компонентов */
+:root {
+  color-scheme: light;
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --surface-2: #f0f2f7;
+  --text: #182033;
+  --muted: #5f6b80;
+  --border: #dde2ec;
+  --accent: #4f46e5;
+  --accent-soft: #eceafe;
+  --accent-text: #ffffff;
+  --success: #16834f;
+  --warning: #a8620a;
+  --danger: #c43a31;
+  --radius: 12px;
+  --sidebar: 240px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0f1218;
+    --surface: #181c25;
+    --surface-2: #20252f;
+    --text: #e7eaf1;
+    --muted: #98a2b5;
+    --border: #2b3140;
+    --accent: #8b85ff;
+    --accent-soft: #26244a;
+    --accent-text: #0f1218;
+    --success: #4fcf8e;
+    --warning: #e9a64b;
+    --danger: #ff7f75;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0f1218;
+  --surface: #181c25;
+  --surface-2: #20252f;
+  --text: #e7eaf1;
+  --muted: #98a2b5;
+  --border: #2b3140;
+  --accent: #8b85ff;
+  --accent-soft: #26244a;
+  --accent-text: #0f1218;
+  --success: #4fcf8e;
+  --warning: #e9a64b;
+  --danger: #ff7f75;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+a { color: var(--accent); }
+h1 { margin: 0; font-size: 1.5rem; line-height: 1.25; }
+h2 { margin: 0 0 12px; font-size: 1.05rem; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.muted { color: var(--muted); }
+
+.btn {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) { border-color: var(--accent); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn--primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); font-weight: 600; }
+
+select, input {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
