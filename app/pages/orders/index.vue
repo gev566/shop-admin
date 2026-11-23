@@ -89,7 +89,12 @@ const formatDateTime = (iso: string) =>
             <tr v-for="order in current.items" :key="order.id">
               <td><NuxtLink :to="`/orders/${order.id}`" class="number">{{ order.number }}</NuxtLink></td>
               <td class="muted">{{ formatDateTime(order.createdAt) }}</td>
-              <td>{{ store.customersById.get(order.customerId)?.name ?? '—' }}</td>
+              <td>
+                <NuxtLink v-if="store.customersById.get(order.customerId)" :to="`/customers/${order.customerId}`">
+                  {{ store.customersById.get(order.customerId)?.name }}
+                </NuxtLink>
+                <template v-else>—</template>
+              </td>
               <td class="num">{{ order.items.reduce((sum, item) => sum + item.qty, 0) }}</td>
               <td class="num">{{ formatPrice(orderTotal(order.items)) }}</td>
               <td><OrderStatusBadge :status="order.status" /></td>

@@ -4,20 +4,24 @@ import type { NavItem } from '~/types'
 defineProps<{ open: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
-const items: NavItem[] = [
+const session = useSessionStore()
+
+const all: NavItem[] = [
   { to: '/', label: 'Обзор', icon: '◧' },
   { to: '/products', label: 'Товары', icon: '▦' },
   { to: '/orders', label: 'Заказы', icon: '◫' },
   { to: '/customers', label: 'Клиенты', icon: '◉' },
   { to: '/settings', label: 'Настройки', icon: '⚙' },
 ]
+// Пункты, к которым у роли нет доступа, в меню не показываем
+const items = computed(() => all.filter((item) => item.to !== '/settings' || session.can('settings.view')))
 </script>
 
 <template>
   <aside class="sidebar" :class="{ 'sidebar--open': open }">
     <div class="brand">
-      <span class="logo" aria-hidden="true">S</span>
-      <span>Shop Admin</span>
+      <span class="logo" aria-hidden="true">{{ session.storeName[0]?.toUpperCase() }}</span>
+      <span class="store-name">{{ session.storeName }}</span>
     </div>
     <nav aria-label="Основное меню">
       <NuxtLink v-for="item in items" :key="item.to" :to="item.to" class="nav-link" @click="emit('close')">
@@ -41,6 +45,7 @@ const items: NavItem[] = [
   gap: 20px;
   z-index: 20;
 }
+.store-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; padding: 0 8px; }
 .logo {
   display: grid;

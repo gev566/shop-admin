@@ -1,8 +1,18 @@
 <script setup lang="ts">
 import type { Theme } from '~/composables/useTheme'
+import { ROLE_LABELS, type Role } from '~/utils/permissions'
 
 const emit = defineEmits<{ menu: [] }>()
 const { theme, apply } = useTheme()
+const session = useSessionStore()
+const route = useRoute()
+
+// Демо-вход: переключение роли без пароля. Если у новой роли нет доступа к текущей странице — уходим на обзор.
+function switchRole(role: Role) {
+  session.role = role
+  useToast().show(`Вы вошли как ${ROLE_LABELS[role].toLowerCase()}`)
+  if (route.meta.permission && !session.can(route.meta.permission)) navigateTo('/')
+}
 
 const options: { value: Theme; label: string }[] = [
   { value: 'system', label: 'Как в системе' },
@@ -21,10 +31,13 @@ const options: { value: Theme; label: string }[] = [
         <option v-for="option in options" :key="option.value" :value="option.value">{{ option.label }}</option>
       </select>
     </label>
-    <div class="user" title="Демо-пользователь">
-      <span class="avatar" aria-hidden="true">А</span>
-      <span class="user-name">Администратор</span>
-    </div>
+    <label class="user" title="Демо-режим: роль переключается без пароля">
+      <span class="avatar" aria-hidden="true">{{ ROLE_LABELS[session.role][0] }}</span>
+      <span class="visually-hidden">Роль</span>
+      <select :value="session.role" @change="switchRole(($event.target as HTMLSelectElement).value as Role)">
+        <option v-for="(label, value) in ROLE_LABELS" :key="value" :value="value">{{ label }}</option>
+      </select>
+    </label>
   </header>
 </template>
 
@@ -58,6 +71,11 @@ const options: { value: Theme; label: string }[] = [
 @media (max-width: 860px) {
   .menu-btn { display: inline-block; }
   .header { padding: 0 16px; }
-  .user-name { display: none; }
+  .header select { min-width: 0; max-width: 140px; }
+}
+@media (max-width: 480px) {
+  .header { gap: 8px; }
+  .avatar { display: none; }
+  .header select { max-width: 120px; padding-left: 8px; padding-right: 4px; }
 }
 </style>

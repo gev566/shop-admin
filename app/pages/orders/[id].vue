@@ -21,7 +21,13 @@ const ACTION_LABELS: Record<OrderStatus, string> = {
   cancelled: 'Отменить заказ',
 }
 
-const actions = computed(() => (order.value ? nextStatuses(order.value.status) : []))
+const session = useSessionStore()
+// Кнопки — только разрешённые переходы статуса, и только те, на которые у роли есть право
+const actions = computed(() =>
+  (order.value ? nextStatuses(order.value.status) : []).filter((status) =>
+    status === 'cancelled' ? session.can('orders.cancel') : session.can('orders.changeStatus'),
+  ),
+)
 const confirmCancel = ref(false)
 
 function apply(status: OrderStatus) {
@@ -81,7 +87,7 @@ const formatDateTime = (iso: string) =>
           <section class="card">
             <h2>Клиент</h2>
             <template v-if="customer">
-              <p class="strong">{{ customer.name }}</p>
+              <p class="strong"><NuxtLink :to="`/customers/${customer.id}`">{{ customer.name }}</NuxtLink></p>
               <p class="muted">{{ customer.email }}<br>{{ customer.phone }}<br>{{ customer.city }}</p>
             </template>
             <p v-else class="muted">Клиент не найден</p>
@@ -101,6 +107,7 @@ const formatDateTime = (iso: string) =>
                 {{ status === 'cancelled' && confirmCancel ? 'Точно отменить?' : ACTION_LABELS[status] }}
               </button>
             </div>
+            <p v-else-if="nextStatuses(order.status).length" class="muted">Для вашей роли действий нет.</p>
             <p v-else class="muted">Заказ завершён — менять статус больше нельзя.</p>
           </section>
 

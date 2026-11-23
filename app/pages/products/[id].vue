@@ -10,6 +10,7 @@ const product = computed(() => store.byId(id))
 
 useHead({ title: () => `${product.value?.name ?? 'Товар не найден'} — Shop Admin` })
 
+const session = useSessionStore()
 const confirmOpen = ref(false)
 
 function save(draft: ProductDraft) {
@@ -33,7 +34,9 @@ function remove() {
       <PageHeader :title="product.name" :subtitle="`Артикул ${product.sku}`" />
       <ProductForm :product="product" :existing="store.items" :categories="store.categories" @submit="save">
         <template #extra>
-          <button type="button" class="btn btn--danger-outline" @click="confirmOpen = true">Удалить товар</button>
+          <button v-if="session.can('products.delete')" type="button" class="btn btn--danger-outline" @click="confirmOpen = true">
+            Удалить товар
+          </button>
         </template>
       </ProductForm>
       <ConfirmDialog
