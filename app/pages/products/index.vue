@@ -50,6 +50,12 @@ const current = computed(() => paginate(sorted.value, page.value, PER_PAGE))
 const hasFilters = computed(() => Boolean(query.value || category.value || status.value))
 const resetFilters = () => router.replace({ query: {} })
 
+const { show } = useToast()
+function resetDemo() {
+  store.resetDemo()
+  show('Каталог возвращён к демо-данным')
+}
+
 const columns: { key: SortKey; label: string; numeric?: boolean }[] = [
   { key: 'name', label: 'Название' },
   { key: 'sku', label: 'Артикул' },
@@ -68,7 +74,7 @@ const STOCK_HINT = { out: 'Нет в наличии', low: 'Заканчивае
       title="Товары"
       :subtitle="`${store.items.length} ${plural(store.items.length, ['товар', 'товара', 'товаров'])} в каталоге`"
     >
-      <button type="button" class="btn btn--primary" disabled title="Появится на следующем шаге">Добавить товар</button>
+      <NuxtLink to="/products/new" class="btn btn--primary">Добавить товар</NuxtLink>
     </PageHeader>
 
     <div class="card">
@@ -116,7 +122,9 @@ const STOCK_HINT = { out: 'Нет в наличии', low: 'Заканчивае
           </thead>
           <tbody>
             <tr v-for="product in current.items" :key="product.id">
-              <td class="name">{{ product.name }}</td>
+              <td class="name">
+                <NuxtLink :to="`/products/${product.id}`">{{ product.name }}</NuxtLink>
+              </td>
               <td class="muted mono">{{ product.sku }}</td>
               <td>{{ product.category }}</td>
               <td class="num">{{ formatPrice(product.price) }}</td>
@@ -135,7 +143,10 @@ const STOCK_HINT = { out: 'Нет в наличии', low: 'Заканчивае
       </div>
 
       <div class="footer">
-        <span class="muted">Найдено: {{ current.total }}</span>
+        <span class="muted">
+          Найдено: {{ current.total }}
+          · <button type="button" class="link" @click="resetDemo">вернуть демо-данные</button>
+        </span>
         <DataPagination :page="current.page" :total-pages="current.totalPages" @change="update({ page: $event })" />
       </div>
     </div>
@@ -154,6 +165,11 @@ th { font-size: 0.8rem; color: var(--muted); font-weight: 600; white-space: nowr
 tbody tr:hover { background: var(--surface-2); }
 .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .name { font-weight: 600; }
+.name a { color: var(--text); text-decoration: none; }
+.name a:hover { color: var(--accent); text-decoration: underline; }
+.link { all: unset; cursor: pointer; color: var(--accent); }
+.link:hover { text-decoration: underline; }
+a.btn { text-decoration: none; }
 .mono { font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem; }
 
 .sort { all: unset; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; }

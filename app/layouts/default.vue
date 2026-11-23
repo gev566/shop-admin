@@ -15,6 +15,7 @@ onMounted(restore)
         <slot />
       </main>
     </div>
+    <AppToasts />
   </div>
 </template>
 
