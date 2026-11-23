@@ -1,4 +1,5 @@
 import type { Product, ProductStatus } from '~/types'
+import { seeded } from '~/data/random'
 
 // Демо-каталог. Генерируется детерминированно (без Math.random), чтобы данные
 // были одинаковыми при каждой загрузке и в тестах.
@@ -12,15 +13,6 @@ const CATALOG: Record<string, string[]> = {
 }
 
 const PREFIX: Record<string, string> = { Электроника: 'EL', Одежда: 'CL', Дом: 'HM', Красота: 'BT', Спорт: 'SP' }
-
-// Простой генератор псевдослучайных чисел: одно и то же зерно → одна и та же последовательность
-function seeded(seed: number) {
-  let value = seed
-  return () => {
-    value = (value * 1103515245 + 12345) % 2147483648
-    return value / 2147483648
-  }
-}
 
 // Около 10% товаров закончились, ещё ~15% на исходе — чтобы было что подсвечивать
 function stockFor(r: number): number {

@@ -1,5 +1,4 @@
-// Основные сущности магазина. Пока используются только в типах и форматтерах,
-// данные появятся на следующих шагах.
+// Основные сущности магазина
 
 export type ProductStatus = 'active' | 'draft' | 'archived'
 
@@ -15,20 +14,37 @@ export interface Product {
 
 export type OrderStatus = 'new' | 'paid' | 'shipped' | 'delivered' | 'cancelled'
 
+// Позиция заказа. Название и цена копируются в момент покупки:
+// если товар потом переименуют или подорожает, старый заказ не изменится.
+export interface OrderItem {
+  productId: number
+  name: string
+  price: number
+  qty: number
+}
+
+export interface StatusChange {
+  status: OrderStatus
+  at: string // ISO-дата и время
+}
+
 export interface Order {
   id: number
+  number: string // номер для людей: «A-10023»
   customerId: number
-  createdAt: string // ISO-дата
-  total: number
+  createdAt: string // ISO-дата и время
+  items: OrderItem[]
   status: OrderStatus
+  history: StatusChange[] // все смены статуса, первая — создание заказа
 }
 
 export interface Customer {
   id: number
   name: string
   email: string
+  phone: string
   city: string
-  ordersCount: number
+  registeredAt: string // ISO-дата
 }
 
 export interface NavItem {
